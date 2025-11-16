@@ -1,4 +1,6 @@
 <?php 
+require_once "../backend/akses_admin.php";
+
 // Set judul halaman
 $admin_page_title = 'Dashboard';
 

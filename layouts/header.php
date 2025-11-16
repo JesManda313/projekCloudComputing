@@ -1,8 +1,13 @@
 <?php
 // Ganti variabel ini untuk simulasi login
 // Nanti, ini akan diganti dengan logika session
-$is_logged_in = true; 
-$user_name = "Jesica Amanda"; 
+session_start();
+
+$is_logged_in = false; 
+if(isset($_SESSION['id_user'])){
+    $is_logged_in = true;
+    $user_name = $_SESSION['name']; 
+};
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -26,7 +31,7 @@ $user_name = "Jesica Amanda";
                     <a href="akun_saya.php" class="text-gray-600 hover:text-blue-600">
                         Akun Saya (<?php echo $user_name; ?>)
                     </a>
-                    <a href="login.php" class="text-red-600 hover:text-red-800 ml-4">Logout</a>
+                    <a href="backend/logout.php" class="text-red-600 hover:text-red-800 ml-4">Logout</a>
                 <?php else: ?>
                     <a href="login.php" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Login</a>
                 <?php endif; ?>

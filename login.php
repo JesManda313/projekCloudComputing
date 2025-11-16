@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (isset($_SESSION['login_error'])) {
+    echo "<div class='mb-4 p-3 bg-red-100 text-red-700 rounded-md'>".$_SESSION['login_error']."</div>";
+    unset($_SESSION['login_error']); // clear once shown
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,7 +23,7 @@
             <p class="text-gray-600">Silakan login ke akun Anda.</p>
         </div>
 
-        <form action="index.php" method="POST" class="space-y-6"> 
+        <form action="backend/login_process.php" method="POST" class="space-y-6"> 
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                 <input type="email" id="email" name="email" required 

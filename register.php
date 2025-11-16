@@ -1,3 +1,11 @@
+<?php 
+session_start();
+if (isset($_SESSION['error'])) {
+    echo "<p class='text-red-600 text-center mb-4'>".$_SESSION['error']."</p>";
+    unset($_SESSION['error']);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,7 +23,7 @@
             <p class="text-gray-600">Daftar gratis untuk mulai memesan tiket.</p>
         </div>
 
-        <form action="login.php" method="POST" class="space-y-6"> 
+        <form action="backend/register_process.php" method="POST" class="space-y-6"> 
             <div>
                 <label for="fullname" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
                 <input type="text" id="fullname" name="fullname" required 

@@ -7,6 +7,6 @@
         <a href="pengguna.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">Manajemen Pengguna</a>
         <a href="laporan.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">Laporan</a>
         
-        <a href="../login.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">Logout</a>
+        <a href="../backend/logout.php" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">Logout</a>
     </nav>
 </aside>

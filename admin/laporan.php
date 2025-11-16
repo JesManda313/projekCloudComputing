@@ -1,4 +1,6 @@
 <?php 
+require_once "../backend/akses_admin.php";
+
 $admin_page_title = 'Laporan Penjualan';
 require_once '../layouts/admin_header.php'; 
 require_once '../layouts/admin_sidebar.php'; 

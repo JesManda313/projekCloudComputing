@@ -1,4 +1,6 @@
-<?php 
+<?php
+require_once "../backend/akses_admin.php"; 
+
 // 1. (LOGIKA PHP)
 // ===================================
 session_start();
