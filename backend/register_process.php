@@ -7,9 +7,10 @@ $fullname = trim($_POST['fullname'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $password = trim($_POST['password'] ?? '');
 $confirm_password = trim($_POST['confirm_password'] ?? '');
+$phone = trim($_POST['phonenumber'] ?? '');
 
 // Validasi input kosong
-if ($fullname == '' || $email == '' || $password == '' || $confirm_password == '') {
+if ($fullname == '' || $email == '' || $password == '' || $confirm_password == '' || $phone == '') {
     $_SESSION['error'] = "Semua field wajib diisi.";
     header("Location: ../register.php");
     exit;
@@ -37,7 +38,7 @@ if ($check->num_rows > 0) {
 // Hash password
 $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-$phone = "081234567890";
+// $phone = "081234567890";
 
 // Default role user
 $role_id = 2;

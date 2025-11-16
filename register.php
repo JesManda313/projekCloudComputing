@@ -30,6 +30,13 @@ if (isset($_SESSION['error'])) {
                        class="mt-1 w-full p-3 border border-gray-300 rounded-md" 
                        placeholder="John Doe">
             </div>
+
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700">No Handphone</label>
+                <input type="text" id="phonenumber" name="phonenumber" required 
+                       class="mt-1 w-full p-3 border border-gray-300 rounded-md" 
+                       placeholder="081234567890">
+            </div>
             
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
