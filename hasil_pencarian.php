@@ -1,87 +1,241 @@
 <?php
-$page_title = 'Hasil Pencarian - FLYNOW';
-require_once 'layouts/header.php'; 
+// session_start();
+require_once 'layouts/header.php';
+$page_title = 'Search Result - FLYNOW';
 
-// --- SIMULASI DATA HASIL PENCARIAN ---
-$search_from = "Jakarta (CGK)";
-$search_to = "Bali (DPS)";
-$hasil_penerbangan = [
-    [
-        'maskapai_logo' => 'https://via.placeholder.com/100x30.png?text=Garuda',
-        'maskapai_nama' => 'Garuda Indonesia',
-        'waktu_berangkat' => '08:00',
-        'bandara_asal' => 'CGK',
-        'waktu_tiba' => '10:50',
-        'bandara_tujuan' => 'DPS',
-        'durasi' => '1h 50m',
-        'harga' => 1450000
-    ],
-    [
-        'maskapai_logo' => 'https://via.placeholder.com/100x30.png?text=AirAsia',
-        'maskapai_nama' => 'AirAsia',
-        'waktu_berangkat' => '09:30',
-        'bandara_asal' => 'CGK',
-        'waktu_tiba' => '12:20',
-        'bandara_tujuan' => 'DPS',
-        'durasi' => '1h 50m',
-        'harga' => 980000
-    ],
-];
+// Redirect kalau tidak ada hasil
+if (!isset($_SESSION['search_results'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$data = $_SESSION['search_results'];
+
+// Ambil data utama
+$from        = $data['from'] ?? '';
+$to          = $data['to'] ?? '';
+$departure   = $data['departure'] ?? '';
+$return_date = $data['return_date'] ?? '';
+
+// Ambil list flights
+$oneWayFlights = $data['oneway'] ?? [];
+$returnFlights = $data['return'] ?? [];  // <= PENTING
+
+// Kumpulkan airlines unik dari semua flight
+$airlines = [];
+
+foreach (array_merge($oneWayFlights, $returnFlights) as $f) {
+    if (!empty($f['airline_code']) && !isset($airlines[$f['airline_code']])) {
+        $airlines[$f['airline_code']] = $f['airline_name'];
+    }
+}
+
+// foreach ($returnFlights as $f) {
+//     if (!empty($f['airline_code']) && !array_key_exists($f['airline_code'], $airlines)) {
+//         $airlines[$f['airline_code']] = $f['airline_name'];
+//     }
+// }
 ?>
 
 <div class="container mx-auto px-6 py-8">
-    
-    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h1 class="text-2xl font-bold">Hasil Pencarian: <?php echo $search_from; ?> → <?php echo $search_to; ?></h1>
-        <p class="text-gray-600">Jumat, 20 Des 2025 | 1 Penumpang</p>
+
+    <!-- HEADER SEARCH RESULT -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h1 class="text-2xl font-bold">
+            Search Result: <?= htmlspecialchars($from); ?> → <?= htmlspecialchars($to); ?>
+        </h1>
+
+        <p class="text-gray-600 mt-2">
+            <?= !empty($departure) ? date('l, d M Y', strtotime($departure)) : '' ?>
+
+            <?php if (!empty($return_date)): ?>
+                | Return: <?= date('l, d M Y', strtotime($return_date)) ?>
+            <?php endif; ?>
+        </p>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-8">
 
+        <!-- SIDEBAR FILTER -->
         <aside class="w-full lg:w-1/4">
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white p-6 rounded-lg shadow-md h-full">
                 <h3 class="text-xl font-semibold mb-4 border-b pb-2">Filter</h3>
-                <div class="mb-4">
-                    <h4 class="font-semibold mb-2">Maskapai</h4>
-                    <label class="flex items-center space-x-2"><input type="checkbox" class="rounded"> <span>Garuda Indonesia</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" class="rounded"> <span>AirAsia</span></label>
+
+                <div class="mb-2 font-semibold">Airlines</div>
+
+                <!-- Scroll sendiri jika panjang -->
+                <div class="max-h-64 overflow-y-auto pr-2">
+
+                    <?php if (!empty($airlines)): ?>
+                        <?php foreach ($airlines as $code => $name): ?>
+                            <label class="flex items-center space-x-2 mb-2 text-sm">
+                                <input type="checkbox"
+                                    class="airline-filter rounded"
+                                    value="<?= htmlspecialchars($code); ?>">
+                                <span><?= htmlspecialchars($name); ?> (<?= htmlspecialchars($code); ?>)</span>
+                            </label>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-gray-500 text-sm">
+                            No airline filter available.
+                        </p>
+                    <?php endif; ?>
+
                 </div>
             </div>
         </aside>
 
-        <main class="w-full lg:w-3/4 space-y-6">
-            <?php foreach ($hasil_penerbangan as $penerbangan): ?>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row items-center">
-                    <div class="p-4"><img src="<?php echo $penerbangan['maskapai_logo']; ?>" alt="<?php echo $penerbangan['maskapai_nama']; ?>" class="w-24"></div>
-                    <div class="flex-1 p-4 text-center md:text-left">
-                        <div class="flex items-center justify-center md:justify-start space-x-4">
-                            <div>
-                                <div class="text-2xl font-bold"><?php echo $penerbangan['waktu_berangkat']; ?></div>
-                                <div class="text-sm text-gray-600"><?php echo $penerbangan['bandara_asal']; ?></div>
-                            </div>
-                            <div class="text-gray-500">
-                                <div>→</div>
-                                <div class="text-xs"><?php echo $penerbangan['durasi']; ?></div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold"><?php echo $penerbangan['waktu_tiba']; ?></div>
-                                <div class="text-sm text-gray-600"><?php echo $penerbangan['bandara_tujuan']; ?></div>
-                            </div>
+        <!-- MAIN CONTENT -->
+        <mainContent class="w-full lg:w-3/4 space-y-8 main-content">
+
+            <!-- DEPARTURE -->
+            <section id="departure-section">
+                <h2 class="text-xl font-semibold mb-4">Departure Flights</h2>
+
+                <?php if (empty($oneWayFlights)): ?>
+                    <p class="text-gray-500 text-sm">No departure flights found.</p>
+                <?php else: ?>
+                    <div class="space-y-4">
+                        <?php foreach ($oneWayFlights as $flight): ?>
+
+                            <?php $flight_type = "departure";
+                            include 'components/flight_card.php'; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </section>
+
+            <!-- RETURN -->
+            <?php if (!empty($return_date)): ?>
+                <section>
+                    <h2 class="text-xl font-semibold mb-4">Return Flights</h2>
+
+                    <?php if (empty($returnFlights)): ?>
+                        <p class="text-gray-500 text-sm">No return flights found.</p>
+                    <?php else: ?>
+                        <div class="space-y-4">
+                            <?php foreach ($returnFlights as $flight): ?>
+                                <?php $flight_type = "return";
+                                include 'components/flight_card.php'; ?>
+                            <?php endforeach; ?>
                         </div>
-                    </div>
-                    <div class="w-full md:w-auto p-4 bg-gray-50 md:bg-transparent text-center md:text-right">
-                        <div class="text-2xl font-bold text-orange-600">Rp <?php echo number_format($penerbangan['harga'], 0, ',', '.'); ?></div>
-                        <div class="text-sm text-gray-600 mb-2">/pax</div>
-                        <a href="booking.php?flight_id=<?php echo $penerbangan['maskapai_nama']; // Simulasikan ID ?>" class="w-full md:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                            PILIH
-                        </a>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </main>
+                    <?php endif; ?>
+                </section>
+            <?php endif; ?>
+
+            </mainConte>
     </div>
 </div>
 
-<?php
-require_once 'layouts/footer.php'; 
-?>
+<!-- FILTER JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        $(".airline-filter").on("change", function() {
+            const activeCodes = $(".airline-filter:checked")
+                .map(function() {
+                    return $(this).val();
+                })
+                .get();
+
+            if (activeCodes.length === 0) {
+                $(".flight-card").show();
+            } else {
+                $(".flight-card").each(function() {
+                    const code = $(this).data("airline");
+                    $(this).toggle(activeCodes.includes(code));
+                });
+            }
+        });
+
+        function showError(message) {
+            const alertHtml = `
+        <div id="alert-error"
+            class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg shadow">
+            <div class="flex justify-between items-center">
+                <span class="font-semibold">${message}</span>
+                <button onclick="$('#alert-error').fadeOut();" 
+                        class="text-red-600 font-bold text-xl">&times;</button>
+            </div>
+        </div>
+    `;
+
+            $("mainContent").prepend(alertHtml);
+
+            setTimeout(() => $("#alert-error").fadeOut(), 3000);
+        }
+
+        function showSuccess(message) {
+            const alertHtml = `
+        <div id="alert-success"
+            class="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded-lg shadow">
+            <div class="flex justify-between items-center">
+                <span class="font-semibold">${message}</span>
+                <button onclick="$('#alert-success').fadeOut();" 
+                        class="text-green-700 font-bold text-xl">&times;</button>
+            </div>
+        </div>
+    `;
+
+            $("mainContent").prepend(alertHtml);
+
+            setTimeout(() => $("#alert-success").fadeOut(), 3000);
+        }
+
+        let selectedDeparture = null;
+        let selectedReturn = null;
+        let hasReturn = <?= !empty($return_date) ? 'true' : 'false'; ?>;
+
+        $(".choose-flight").on("click", function() {
+            let id = $(this).data("flight-id");
+            let type = $(this).data("type");
+
+            // === CASE 1: One-way (tanpa return date) ===
+            if (!hasReturn) {
+                window.location.href = "booking.php?departure_id=" + id;
+                return;
+            }
+
+            // === CASE 2: Round-trip ===
+            if (type === "departure") {
+                selectedDeparture = id;
+
+                showSuccess("Departure flight selected. Please choose your return flight next.");
+
+                $('html, body').animate({
+                    scrollTop: $(".main-content").offset().top
+                }, 600);
+
+                return;
+            }
+
+            if (type === "return") {
+
+                if (!selectedDeparture) {
+                    showError("Please choose a departure flight first.");
+                    $('html, body').animate({
+                        scrollTop: $(".main-content").offset().top
+                    }, 600);
+                    return;
+                }
+
+                selectedReturn = id;
+
+                showSuccess("Both flights selected. Redirecting to booking...");
+
+                setTimeout(() => {
+                    window.location.href =
+                        "booking.php?departure_id=" + selectedDeparture +
+                        "&return_id=" + selectedReturn;
+                }, 900);
+            }
+        });
+
+
+
+
+    });
+</script>
+
+<?php require_once 'layouts/footer.php'; ?>
