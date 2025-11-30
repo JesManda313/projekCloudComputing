@@ -1,6 +1,4 @@
 <?php
-// Ganti variabel ini untuk simulasi login
-// Nanti, ini akan diganti dengan logika session
 session_start();
 
 $is_logged_in = false; 
