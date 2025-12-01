@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <ul class="space-y-1">
                     <li><a href="akun_saya.php" class="block px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md">Edit Profile</a></li>
                     <li><a href="reset_pass.php" class="block px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-md">Change Password</a></li>
-                    <li><a href="logout.php" class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-md">Logout</a></li>
+                    <li><a href="backend/logout.php" class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-md">Logout</a></li>
                 </ul>
             </div>
         </div>

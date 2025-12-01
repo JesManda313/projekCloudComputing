@@ -24,9 +24,9 @@ if(isset($_SESSION['id_user'])){
             <a href="index.php" class="text-2xl font-bold text-blue-600">FLYNOW</a>
             <div class="space-x-4 flex items-center">
                 <a href="index.php" class="text-gray-600 hover:text-blue-600">Home</a>
-                <a href="pesanan_saya.php" class="text-gray-600 hover:text-blue-600">Pesanan Saya</a>
                 
                 <?php if ($is_logged_in): ?>
+                    <a href="pesanan_saya.php" class="text-gray-600 hover:text-blue-600">Pesanan Saya</a>
                     <a href="akun_saya.php" class="text-gray-600 hover:text-blue-600">
                         Akun Saya (<?php echo $user_name; ?>)
                     </a>
