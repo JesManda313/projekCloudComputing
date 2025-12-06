@@ -22,6 +22,13 @@ if ($result->num_rows === 1) {
     // Cek password
     if (password_verify($password, $user['password_hash'])) {
 
+        $_SESSION['user'] = [
+            "id_user"   => $user['id_user'],
+            "full_name" => $user['name'],        // atau kolom full_name jika ada
+            "email"     => $user['email'],       // pastikan ada di tabel users
+            "role_id"   => $user['role_id']
+        ];
+
         // Buat session user
         $_SESSION['id_user'] = $user['id_user'];
         $_SESSION['name'] = $user['name'];

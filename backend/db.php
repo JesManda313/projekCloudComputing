@@ -1,5 +1,5 @@
 <?php
-$host = "flynow-db.ctwsanreln2y.us-east-1.rds.amazonaws.com";
+$host = "flynow-db.cx4mw8eq6yvl.us-east-1.rds.amazonaws.com";
 $username = "admin";
 $password = "FlyNow2025!";
 $database = "flynow_db";
