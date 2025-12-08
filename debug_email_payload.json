@@ -1,0 +1,69 @@
+{
+    "transaction_id": 7,
+    "user_email": "c14230085@john.petra.ac.id",
+    "user_name": "Maria Gabriella",
+    "booking_code": "FLYN06122544",
+    "payment_method": "Credit Card",
+    "total_price": 4300000,
+    "total_passengers": 2,
+    "departure": {
+        "id_flight": 1,
+        "flight_code": "GA123",
+        "airline_id": 1,
+        "origin_airport": 1,
+        "destination_airport": 4,
+        "price": 1200000,
+        "seat_quota": 150,
+        "departure_date": "2025-12-24",
+        "departure_time": "21:00:00",
+        "travel_duration": 120,
+        "arrival_date": "2025-12-24",
+        "arrival_time": "23:00:00",
+        "created_at": "2025-12-06 07:39:22",
+        "airline_name": "Garuda Indonesia",
+        "airline_code": "GA",
+        "origin_code": "CGK",
+        "dest_code": "SUB"
+    },
+    "return": {
+        "id_flight": 2,
+        "flight_code": "QG456",
+        "airline_id": 2,
+        "origin_airport": 4,
+        "destination_airport": 1,
+        "price": 950000,
+        "seat_quota": 150,
+        "departure_date": "2026-01-05",
+        "departure_time": "10:00:00",
+        "travel_duration": 125,
+        "arrival_date": "2026-01-05",
+        "arrival_time": "12:05:00",
+        "created_at": "2025-12-06 07:40:10",
+        "airline_name": "Citilink",
+        "airline_code": "QG",
+        "origin_code": "SUB",
+        "dest_code": "CGK"
+    },
+    "passengers": [
+        {
+            "id_passenger": "10",
+            "transaction_id": "7",
+            "passenger_type": "adult",
+            "title": "Mr",
+            "full_name": "Test Ayah",
+            "nik": "1234567890123456",
+            "mother_name": null,
+            "created_at": "2025-12-06 11:38:40"
+        },
+        {
+            "id_passenger": "11",
+            "transaction_id": "7",
+            "passenger_type": "child",
+            "title": "Master",
+            "full_name": "Test Anak",
+            "nik": "1234567890123456",
+            "mother_name": "Test Ibu",
+            "created_at": "2025-12-06 11:38:40"
+        }
+    ]
+}
