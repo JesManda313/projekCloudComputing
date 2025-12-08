@@ -1,5 +1,7 @@
 <?php 
+require_once "../backend/db.php";
 require_once "../backend/akses_admin.php";
+require_once "../backend/admin/get_stats.php";
 
 // Set judul halaman
 $admin_page_title = 'Dashboard';
@@ -8,10 +10,23 @@ $admin_page_title = 'Dashboard';
 require_once '../layouts/admin_header.php'; 
 require_once '../layouts/admin_sidebar.php'; 
 
-// --- SIMULASI DATA STATISTIK ---
-$total_penjualan_hari_ini = 15200000;
-$tiket_terjual_hari_ini = 12;
-$total_pengguna = 450;
+
+// --- DATA STATISTIK HARIAN ---
+$total_penjualan_hari_ini = getTotalSalesToday($conn);
+$tiket_terjual_hari_ini = getTotalTicketsSoldToday($conn);
+$total_pengguna = countTotalUsers($conn);
+
+// --- DATA UNTUK GRAFIK 12 BULAN TERAKHIR ---
+$data_grafik_penjualan = getSalesLast12Months($conn); 
+
+// Ekstrak label bulan dan data penjualan untuk Chart.js
+$labels = array_column($data_grafik_penjualan, 'label');
+$sales_data = array_column($data_grafik_penjualan, 'penjualan');
+
+// Konversi ke format JSON untuk digunakan di JavaScript
+$labels_json = json_encode($labels);
+$sales_data_json = json_encode($sales_data);
+
 ?>
 
 <main class="flex-1 p-10">
@@ -31,11 +46,10 @@ $total_pengguna = 450;
             <p class="text-3xl font-bold text-purple-600"><?php echo $total_pengguna; ?></p>
         </div>
     </div>
-
+    
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="text-xl font-semibold mb-4">Grafik Penjualan 7 Hari Terakhir</h3>
-        <div class="h-64 bg-gray-200 flex items-center justify-center rounded-md">
-            <p class="text-gray-500">[Placeholder untuk Grafik]</p>
+        <h3 class="text-xl font-semibold mb-4">Grafik Penjualan 12 Bulan Terakhir</h3>
+        <div class="h-96"> <canvas id="salesChart"></canvas>
         </div>
     </div>
 </main>
