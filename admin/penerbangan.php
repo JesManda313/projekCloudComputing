@@ -70,20 +70,20 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
 
 
 
-    <h1 class="text-3xl font-bold mb-8">Manajemen Penerbangan</h1>
+    <h1 class="text-3xl font-bold mb-8">Flight Management</h1>
 
     <!-- ========== FORM TAMBAH FLIGHT ========== -->
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 class="text-2xl font-semibold mb-4">Tambah Penerbangan Baru</h2>
+        <h2 class="text-2xl font-semibold mb-4">Add New Flight</h2>
 
-        <form action="../backend/admin/flight_add.php" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form id="flightForm" action="../backend/admin/flight_add.php" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
             <!-- MASKAPAI -->
             <div class="md:col-span-3">
-                <label class="block text-sm font-medium">Maskapai</label>
+                <label class="block text-sm font-medium">Airline</label>
                 <select name="airline_id" id="airline_select"
                     class="w-full mt-1 p-2 border rounded-md text-sm" required>
-                    <option value="">-- Pilih Maskapai --</option>
+                    <option value="">-- Choose Airline --</option>
                     <?php while ($a = $airlines->fetch_assoc()): ?>
                         <option value="<?= $a['id_airline']; ?>" data-code="<?= $a['airline_code']; ?>">
                             <?= $a['airline_name']; ?> (<?= $a['airline_code']; ?>)
@@ -94,18 +94,18 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
 
             <!-- KODE FLIGHT -->
             <div>
-                <label class="block text-sm font-medium">Kode Penerbangan</label>
+                <label class="block text-sm font-medium">Flight Code</label>
                 <div class="flex">
-                    <input type="text" id="airline_prefix" class="w-14 p-2 border rounded-l-md bg-gray-100 text-center text-sm" disabled placeholder="XX">
+                    <input type="text" id="airline_prefix" name="airline_prefix" class="w-14 p-2 border rounded-l-md bg-gray-100 text-center text-sm" readonly placeholder="XX">
                     <input type="number" name="flight_number" class="flex-1 p-2 border rounded-r-md text-sm" placeholder="123" required>
                 </div>
             </div>
 
             <!-- ASAL -->
             <div>
-                <label class="block text-sm font-medium">Asal</label>
+                <label class="block text-sm font-medium">Origin</label>
                 <select name="origin_airport" class="w-full mt-1 p-2 border rounded-md text-sm" required>
-                    <option value="">-- Pilih Asal --</option>
+                    <option value="">-- Choose Origin --</option>
                     <?php while ($o = $airports1->fetch_assoc()): ?>
                         <option value="<?= $o['id_airport']; ?>"><?= $o['city']; ?> (<?= $o['airport_code']; ?>)</option>
                     <?php endwhile; ?>
@@ -114,9 +114,9 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
 
             <!-- TUJUAN -->
             <div>
-                <label class="block text-sm font-medium">Tujuan</label>
+                <label class="block text-sm font-medium">Destination</label>
                 <select name="destination_airport" class="w-full mt-1 p-2 border rounded-md text-sm" required>
-                    <option value="">-- Pilih Tujuan --</option>
+                    <option value="">-- Choose Destination --</option>
                     <?php while ($d = $airports2->fetch_assoc()): ?>
                         <option value="<?= $d['id_airport']; ?>"><?= $d['city']; ?> (<?= $d['airport_code']; ?>)</option>
                     <?php endwhile; ?>
@@ -125,38 +125,38 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
 
             <!-- TANGGAL -->
             <div>
-                <label class="block text-sm font-medium">Tanggal Keberangkatan</label>
+                <label class="block text-sm font-medium">Departure Date</label>
                 <input type="date" name="departure_date" class="w-full mt-1 p-2 border rounded-md text-sm" required>
             </div>
 
             <!-- WAKTU -->
             <div>
-                <label class="block text-sm font-medium">Waktu Keberangkatan</label>
+                <label class="block text-sm font-medium">Departure time</label>
                 <input type="time" name="departure_time" class="w-full mt-1 p-2 border rounded-md text-sm" required>
             </div>
 
             <!-- DURASI -->
             <div>
-                <label class="block text-sm font-medium">Durasi (menit)</label>
+                <label class="block text-sm font-medium">Duration (min)</label>
                 <input type="number" name="travel_duration" placeholder="120" class="w-full mt-1 p-2 border rounded-md text-sm" required>
             </div>
 
             <!-- HARGA -->
             <div>
-                <label class="block text-sm font-medium">Harga</label>
+                <label class="block text-sm font-medium">Price</label>
                 <input type="number" name="price" placeholder="1000000" class="w-full mt-1 p-2 border rounded-md text-sm" required>
             </div>
 
             <!-- KUOTA -->
             <div>
-                <label class="block text-sm font-medium">Kuota Kursi</label>
+                <label class="block text-sm font-medium">Seat Quota</label>
                 <input type="number" name="seats" placeholder="150" class="w-full mt-1 p-2 border rounded-md text-sm" required>
             </div>
 
             <div class="md:col-span-3 flex gap-2">
                 <button type="submit"
                     class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
-                    Simpan Penerbangan
+                    Save Flight
                 </button>
 
                 <!-- Tombol Cancel Edit -->
@@ -216,19 +216,19 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
             <table class="w-full text-sm text-gray-700">
                 <thead class="bg-gray-100 text-xs uppercase text-gray-600">
                     <tr>
-                        <th class="px-4 py-3">Kode</th>
-                        <th class="px-4 py-3">Maskapai</th>
-                        <th class="px-4 py-3">Rute</th>
-                        <th class="px-4 py-3">Jadwal</th>
-                        <th class="px-4 py-3">Harga</th>
-                        <th class="px-4 py-3">Kuota</th>
+                        <th class="px-4 py-3">Code</th>
+                        <th class="px-4 py-3">Airline</th>
+                        <th class="px-4 py-3">Route</th>
+                        <th class="px-4 py-3">Schedule</th>
+                        <th class="px-4 py-3">Price</th>
+                        <th class="px-4 py-3">Quota</th>
                         <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Aksi</th>
+                        <th class="px-4 py-3">Action</th>
                     </tr>
                 </thead>
 
                 <tbody id="flight_table" class="divide-y divide-gray-200">
-                    <!-- AJAX LOAD -->
+                    
                 </tbody>
 
             </table>
@@ -346,11 +346,11 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
                     $("h2").text("Edit Penerbangan");
 
                     // Ubah action form
-                    $("form").attr("action", "../backend/admin/flight_update.php");
+                    $("#flightForm").attr("action", "../backend/admin/flight_update.php");
 
                     // Tambah hidden input ID flight jika belum ada
                     if ($("#flight_id").length === 0) {
-                        $("form").prepend(`<input type="hidden" name="id_flight" id="flight_id">`);
+                        $("#flightForm").prepend(`<input type="hidden" name="id_flight" id="flight_id">`); // Targetkan flightForm
                     }
 
                     $("#flight_id").val(f.id_flight);
@@ -413,9 +413,9 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
 
             $("#btn_cancel_edit").click(function() {
                 $("h2").text("Tambah Penerbangan Baru");
-                $("form").attr("action", "../backend/admin/flight_add.php");
+                $("#flightForm").attr("action", "../backend/admin/flight_add.php"); // Targetkan flightForm
 
-                $("form")[0].reset();
+                $("#flightForm")[0].reset();
                 $("#airline_prefix").val("");
 
                 $("#btn_cancel_edit").addClass("hidden");
