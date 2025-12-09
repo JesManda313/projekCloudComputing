@@ -3,7 +3,7 @@ require_once "../backend/db.php";
 require_once "../backend/akses_admin.php";
 
 // Set judul halaman dan panggil layout
-$admin_page_title = 'Detail Pesanan';
+$admin_page_title = 'Order Details';
 require_once '../layouts/admin_header.php'; 
 require_once '../layouts/admin_sidebar.php'; 
 
@@ -86,7 +86,7 @@ if ($transaction_id > 0) {
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold"><?php echo $admin_page_title; ?> (ID: <?php echo $transaction_id; ?>)</h1>
         <a href="pesanan.php" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-            &larr; Kembali ke Daftar Pesanan
+            &larr; Back to Order Management
         </a>
     </div>
 
@@ -99,18 +99,18 @@ if ($transaction_id > 0) {
         <div class="bg-white p-8 rounded-lg shadow-xl space-y-8">
 
             <div class="border-b pb-4">
-                <h2 class="text-2xl font-bold text-blue-700 mb-4">Ringkasan Transaksi</h2>
+                <h2 class="text-2xl font-bold text-blue-700 mb-4">Transaction Summary</h2>
                 <div class="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                        <p class="text-gray-500 font-medium">Kode Booking</p>
+                        <p class="text-gray-500 font-medium">Code Booking</p>
                         <p class="text-lg font-extrabold text-blue-600"><?php echo htmlspecialchars($order_data['booking_code']); ?></p>
                     </div>
                     <div>
-                        <p class="text-gray-500 font-medium">Tanggal Pesanan</p>
+                        <p class="text-gray-500 font-medium">Order Date</p>
                         <p class="text-lg"><?php echo date('d M Y, H:i', strtotime($order_data['created_at'])); ?> WIB</p>
                     </div>
                     <div>
-                        <p class="text-gray-500 font-medium">Status Pembayaran</p>
+                        <p class="text-gray-500 font-medium">Payment Status</p>
                         <?php 
                             $status = strtoupper($order_data['payment_status']);
                             $class = ($status == 'PAID' || $status == 'LUNAS') ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
@@ -120,7 +120,7 @@ if ($transaction_id > 0) {
                         </span>
                     </div>
                     <div class="col-span-3 pt-4 border-t">
-                        <p class="text-gray-500 font-medium">Total Pembayaran</p>
+                        <p class="text-gray-500 font-medium">Total payment</p>
                         <p class="text-3xl font-extrabold text-green-600">
                             Rp <?php echo number_format($order_data['total_price'], 0, ',', '.'); ?>
                         </p>
@@ -129,7 +129,7 @@ if ($transaction_id > 0) {
             </div>
 
             <div class="border-b pb-4">
-                <h2 class="text-2xl font-bold text-gray-700 mb-4">Rincian Penerbangan</h2>
+                <h2 class="text-2xl font-bold text-gray-700 mb-4">Flight Details</h2>
                 <?php if ($flight_data): ?>
                     <div class="p-4 border rounded-lg bg-gray-50">
                         <div class="grid grid-cols-2 gap-4">
@@ -139,7 +139,7 @@ if ($transaction_id > 0) {
                                 </p>
                                 <p class="text-sm text-gray-500">
                                     <?php echo htmlspecialchars($flight_data['origin_city']); ?> (<?php echo htmlspecialchars($flight_data['origin_airport']); ?>)
-                                    ke
+                                    to
                                     <?php echo htmlspecialchars($flight_data['dest_city']); ?> (<?php echo htmlspecialchars($flight_data['dest_airport']); ?>)
                                 </p>
                             </div>
@@ -149,7 +149,7 @@ if ($transaction_id > 0) {
                             </div>
                         </div>
                         <div class="mt-4 pt-4 border-t">
-                            <p class="text-sm font-medium text-gray-500">Harga Tiket Satuan</p>
+                            <p class="text-sm font-medium text-gray-500">Unit Ticket Price</p>
                             <p class="text-md font-semibold">
                                 Rp <?php echo number_format($flight_data['price'], 0, ',', '.'); ?>
                             </p>
@@ -159,10 +159,10 @@ if ($transaction_id > 0) {
             </div>
 
             <div class="border-b pb-4">
-                <h2 class="text-2xl font-bold text-gray-700 mb-4">Detail Pelanggan</h2>
+                <h2 class="text-2xl font-bold text-gray-700 mb-4">Customer Details</h2>
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                        <p class="text-gray-500 font-medium">Nama Pelanggan</p>
+                        <p class="text-gray-500 font-medium">Customer Name</p>
                         <p class="text-md font-semibold"><?php echo htmlspecialchars($order_data['customer_name']); ?></p>
                     </div>
                     <div>
@@ -173,21 +173,21 @@ if ($transaction_id > 0) {
             </div>
 
             <div>
-                <h2 class="text-2xl font-bold text-gray-700 mb-4">Daftar Penumpang (<?php echo $order_data['total_passengers']; ?> Orang)</h2>
+                <h2 class="text-2xl font-bold text-gray-700 mb-4">Passenger List (<?php echo $order_data['total_passengers']; ?> person)</h2>
                 
                 <div class="overflow-x-auto border rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Lengkap</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipe</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Full Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">NIK</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Ibu</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mother's name</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <?php if (empty($passengers_data)): ?>
-                                <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Data penumpang tidak ditemukan.</td></tr>
+                                <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Passenger data not found.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($passengers_data as $p): ?>
                                 <tr>
