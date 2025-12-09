@@ -4,7 +4,7 @@ require_once "../backend/akses_admin.php";
 require_once "../backend/admin/get_orders.php"; // File yang berisi fungsi getOrders()
 
 // Set judul halaman dan panggil layout
-$admin_page_title = 'Manajemen Pesanan';
+$admin_page_title = 'Order Management';
 require_once '../layouts/admin_header.php'; 
 require_once '../layouts/admin_sidebar.php'; 
 
@@ -25,7 +25,7 @@ if (!is_array($order_data)) {
     $total_pages = 1;
     $total_rows = 0;
     // Tambahkan notifikasi error jika perlu
-    $_SESSION['error'] = "Gagal memuat data pesanan. Cek koneksi dan query database di get_orders.php.";
+    $_SESSION['error'] = "Failed to load order data. Check the database connection and query in get_orders.php.";
 } else {
     $display_orders = $order_data['orders'];
     $total_pages = $order_data['total_pages'];
@@ -55,10 +55,10 @@ function getPaginationLink($page, $search) {
     <div class="mb-8">
         <form action="pesanan.php" method="GET">
             <div class="flex">
-                <input type="text" name="search_query" placeholder="Cari Kode Booking, Nama, atau Email..." 
+                <input type="text" name="search_query" placeholder="Search for Booking Code, Name, or Email..." 
                         class="w-full md:w-1/2 p-2 border rounded-l-md" 
                         value="<?php echo htmlspecialchars($search_query); ?>">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700">Cari</button>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700">Search</button>
                 <a href="pesanan.php" class="text-gray-600 ml-4 self-center hover:underline">Reset</a>
             </div>
         </form>
@@ -68,17 +68,17 @@ function getPaginationLink($page, $search) {
         <table class="w-full min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Detail Pesanan</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Transaksi</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pelanggan</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order Detail</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transaction Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 <?php if (empty($display_orders)): ?>
-                    <tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Tidak ada data pesanan yang ditemukan.</td></tr>
+                    <tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No order data found.</td></tr>
                 <?php else: ?>
                     <?php foreach ($display_orders as $order): ?>
                         <tr>
@@ -109,7 +109,7 @@ function getPaginationLink($page, $search) {
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <a href="detail_pesanan.php?id=<?php echo htmlspecialchars($order['id_transaction']); ?>"
                                    class="text-blue-600 hover:text-blue-900 font-semibold hover:underline">
-                                    Lihat Detail
+                                    See Detail
                                 </a>
                             </td>
                         </tr>
@@ -123,9 +123,9 @@ function getPaginationLink($page, $search) {
         <div class="mt-4 flex justify-between items-center px-4 py-3 sm:px-6 bg-white rounded-lg shadow-md">
             
             <p class="text-sm text-gray-700">
-                Menampilkan 
-                <span class="font-medium"><?php echo min($limit, $total_rows - ($current_page - 1) * $limit); ?></span> dari 
-                <span class="font-medium"><?php echo $total_rows; ?></span> hasil
+                Show 
+                <span class="font-medium"><?php echo min($limit, $total_rows - ($current_page - 1) * $limit); ?></span> from 
+                <span class="font-medium"><?php echo $total_rows; ?></span> result
             </p>
 
             <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -133,7 +133,7 @@ function getPaginationLink($page, $search) {
                 <a href="<?php echo getPaginationLink($current_page - 1, $search_query); ?>" 
                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 
                           <?php echo ($current_page <= 1) ? 'pointer-events-none opacity-50' : ''; ?>">
-                    Sebelumnya
+                    Before
                 </a>
                 
                 <?php 
@@ -157,7 +157,7 @@ function getPaginationLink($page, $search) {
                 <a href="<?php echo getPaginationLink($current_page + 1, $search_query); ?>" 
                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 
                           <?php echo ($current_page >= $total_pages) ? 'pointer-events-none opacity-50' : ''; ?>">
-                    Selanjutnya
+                    Next
                 </a>
             </nav>
         </div>
