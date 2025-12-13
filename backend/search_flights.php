@@ -57,6 +57,7 @@ $sql = "
     WHERE f.origin_airport = ?
       AND f.destination_airport = ?
       AND f.departure_date = ?
+      AND f.seat_quota > f.booked_seats
     ORDER BY f.departure_time ASC
 ";
 

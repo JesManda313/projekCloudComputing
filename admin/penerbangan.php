@@ -260,7 +260,15 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
             const map = {
                 "Upcoming": "bg-blue-100 text-blue-700",
                 "Ongoing": "bg-yellow-100 text-yellow-700",
-                "Arrived": "bg-green-100 text-green-700"
+                "Arrived": "bg-green-100 text-green-700",
+                // "Sold Out": "bg-red-100 text-red-700"
+            };
+            return `<span class="px-3 py-1 rounded-full text-xs ${map[status]}">${status}</span>`;
+        }
+
+        function statusBadgeSoldOut(status) {
+            const map = {
+                "Sold Out": "bg-red-100 text-red-700"
             };
             return `<span class="px-3 py-1 rounded-full text-xs ${map[status]}">${status}</span>`;
         }
@@ -311,17 +319,20 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
 
                         let isLocked = (f.status === "Ongoing" || f.status === "Arrived");
 
+                        let canEdit = f.can_edit;
+                        let canDelete = f.can_delete;
+
                         let editBtn = `
-                <button ${isLocked ? "disabled" : `onclick="editFlight(${f.id_flight})"`}
+                <button ${!canEdit ? "disabled" : `onclick="editFlight(${f.id_flight})"`}
                     class="px-3 py-1 rounded-md text-xs 
-                    ${isLocked ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}">
+                    ${!canEdit ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}">
                     Edit
                 </button>`;
 
                         let deleteBtn = `
-                <button ${isLocked ? "disabled" : `onclick="openDeleteModal(${f.id_flight})"`}
+                <button ${!canDelete ? "disabled" : `onclick="openDeleteModal(${f.id_flight})"`}
                     class="px-3 py-1 rounded-md text-xs 
-                    ${isLocked ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-700"}">
+                    ${!canDelete ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-700"}">
                     Delete
                 </button>`;
 
@@ -338,8 +349,14 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
                             <span class="text-xs text-gray-500">(${f.travel_duration} minutes)</span>
                         </td>
                         <td class="px-4 py-3">Rp ${Number(f.price).toLocaleString("id-ID")}</td>
-                        <td class="px-4 py-3">${f.seat_quota}</td>
-                        <td class="px-4 py-3">${statusBadge(f.status)}</td>
+                        <td class="px-4 py-3">${f.booked_seats} / ${f.seat_quota}</td>
+                        <td class="px-4 py-3">
+                            ${statusBadge(f.status)}
+                            ${f.status_sold_out
+                                ? `<br><br>${statusBadgeSoldOut(f.status_sold_out)}`
+                                : ""
+                            }
+                            </td>                        
                         <td class="px-4 py-3">
                             <div class="flex gap-2 justify-center">
                                 ${editBtn}

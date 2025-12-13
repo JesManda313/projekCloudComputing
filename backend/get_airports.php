@@ -1,7 +1,7 @@
 <?php
 require_once "db.php";
 
-$q = $conn->query("SELECT city, airport_code FROM airports ORDER BY airport_name ASC");
+$q = $conn->query("SELECT city, airport_code FROM airports ORDER BY city ASC");
 
 $data = [];
 while ($row = $q->fetch_assoc()) {

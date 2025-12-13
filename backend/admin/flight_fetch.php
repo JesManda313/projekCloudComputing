@@ -48,7 +48,8 @@ $total_pages = ceil($total / $limit);
 $query = "
 SELECT f.*, a.airline_name,
        o.city AS origin_city, o.airport_code AS origin_code,
-       d.city AS dest_city, d.airport_code AS dest_code
+       d.city AS dest_city, d.airport_code AS dest_code,
+       (f.seat_quota - f.booked_seats) AS remaining_seats
 " . $baseQuery . "
 ORDER BY f.departure_date, f.departure_time
 LIMIT ? OFFSET ?
@@ -76,13 +77,25 @@ while ($row = $result->fetch_assoc()) {
 
     $dep = new DateTime($row['departure_date'] . " " . $row['departure_time']);
     $arr = new DateTime($row['arrival_date']   . " " . $row['arrival_time']);
-
+    
     if ($arr < $now) {
         $row['status'] = "Arrived";
+        $row['can_edit'] = false;
+        $row['can_delete'] = false;
     } elseif ($dep <= $now && $arr >= $now) {
         $row['status'] = "Ongoing";
+        $row['can_edit'] = false;
+        $row['can_delete'] = false;
     } else {
         $row['status'] = "Upcoming";
+        $row['can_edit'] = true;
+        $row['can_delete'] = ($row['booked_seats'] == 0);
+    }
+
+    if ($row['remaining_seats'] <= 0) {
+        $row['status_sold_out'] = "Sold Out";
+        $row['can_edit'] = false;
+        $row['can_delete'] = false;
     }
 
     $flights[] = $row;
@@ -100,4 +113,3 @@ echo json_encode([
     "total_pages"  => $total_pages
 ]);
 exit;
-?>
