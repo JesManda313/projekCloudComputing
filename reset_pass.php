@@ -132,3 +132,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php require_once "layouts/footer.php"; ?>
+
+<script>
+    // Auto hide alert after 3 seconds
+    $(document).ready(function() {
+        setTimeout(() => {
+            $("#alert-error, #alert-success").fadeOut();
+        }, 3000);
+    });
+</script>

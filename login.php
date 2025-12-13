@@ -63,10 +63,8 @@ session_start();
 
             <div class="flex items-center justify-between">
                 <label class="flex items-center space-x-2">
-                    <input type="checkbox" name="remember" class="rounded">
-                    <span class="text-sm text-gray-600">Ingat saya</span>
                 </label>
-                <a href="#" class="text-sm text-blue-600 hover:underline">Lupa Password?</a>
+                <a href="forgot_password.php" class="text-sm text-blue-600 hover:underline">Forgot your password?</a>
             </div>
 
             <div>
