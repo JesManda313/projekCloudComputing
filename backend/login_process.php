@@ -45,14 +45,14 @@ if ($result->num_rows === 1) {
 
     } else {
         // Password salah
-        $_SESSION['login_error'] = "Email atau password salah.";
+        $_SESSION['error'] = "Email atau password salah.";
         header("Location: ../login.php");
         exit;
     }
 
 } else {
     // Email tidak ditemukan
-    $_SESSION['login_error'] = "Email atau password salah.";
+    $_SESSION['error'] = "Email atau password salah.";
     header("Location: ../login.php");
     exit;
 }

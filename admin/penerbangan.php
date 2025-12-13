@@ -228,11 +228,16 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
                 </thead>
 
                 <tbody id="flight_table" class="divide-y divide-gray-200">
-                    
+                    <tr>
+                        <td colspan="8" class="p-4 text-center text-gray-500">Loading Flight...</td>
+                    </tr>
                 </tbody>
 
             </table>
         </div>
+
+        <div class="flex justify-end mt-4" id="paginationContainer"></div>
+
     </div>
 
 
@@ -265,71 +270,96 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
             $("#deleteModal").removeClass("hidden");
         }
 
-        function loadFlights(date = "") {
+        let currentPage = 1;
+        let currentDate = "";
+
+        function loadFlights(page = 1) {
+
+            currentPage = page;
+            $("#flight_table").html("");
+
+            $("#flight_table").html(`
+                <tr>
+                    <td colspan="8" class="p-4 text-center text-gray-500">Loading Flight...</td>
+                </tr>
+            `);
+
             $.ajax({
                 url: "../backend/admin/flight_fetch.php",
                 type: "GET",
                 data: {
-                    date: date
+                    page: page,
+                    date: currentDate
                 },
                 dataType: "json",
                 success: function(res) {
 
                     $("#flight_table").html("");
 
-                    res.forEach(f => {
+                    if (res.flights.length === 0) {
+                        $("#flight_table").html(`
+                    <tr>
+                        <td colspan="8" class="px-4 py-6 text-center text-gray-500">
+                            No flights found.
+                        </td>
+                    </tr>
+                `);
+                        return;
+                    }
+
+                    res.flights.forEach(f => {
 
                         let isLocked = (f.status === "Ongoing" || f.status === "Arrived");
 
                         let editBtn = `
-                        <button ${isLocked ? "disabled" : `onclick="editFlight(${f.id_flight})"`}
-                            class="px-3 py-1 rounded-md text-xs 
-                            ${isLocked ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}">
-                            Edit
-                        </button>`;
+                <button ${isLocked ? "disabled" : `onclick="editFlight(${f.id_flight})"`}
+                    class="px-3 py-1 rounded-md text-xs 
+                    ${isLocked ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}">
+                    Edit
+                </button>`;
 
                         let deleteBtn = `
-                        <button ${isLocked ? "disabled" : `onclick="openDeleteModal(${f.id_flight})"`}
-                            class="px-3 py-1 rounded-md text-xs 
-                            ${isLocked ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-700"}">
-                            Delete
-                        </button>`;
+                <button ${isLocked ? "disabled" : `onclick="openDeleteModal(${f.id_flight})"`}
+                    class="px-3 py-1 rounded-md text-xs 
+                    ${isLocked ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-700"}">
+                    Delete
+                </button>`;
 
-                        let html = `
-                <tr class="hover:bg-gray-50">
-
-                    <td class="px-4 py-3 align-middle font-medium">${f.flight_code}</td>
-                    <td class="px-4 py-3 align-middle">${f.airline_name}</td>
-
-                    <td class="px-4 py-3 align-middle">
-                        ${f.origin_city} (${f.origin_code}) → ${f.dest_city} (${f.dest_code})
-                    </td>
-
-                    <td class="px-4 py-3 align-middle">
-                        ${formatTanggalText(f.departure_date)}<br>
-                        <span class="font-semibold">${cutTime(f.departure_time)} - ${cutTime(f.arrival_time)}</span><br>
-                        <span class="text-xs text-gray-500">(${f.travel_duration} minutes)</span>
-                    </td>
-
-                    <td class="px-4 py-3 align-middle">Rp ${Number(f.price).toLocaleString("id-ID")}</td>
-                    <td class="px-4 py-3 align-middle">${f.seat_quota}</td>
-                    <td class="px-4 py-3 align-middle">${statusBadge(f.status)}</td>
-
-                    <td class="px-4 py-3 align-middle">
-                        <div class="flex items-center justify-center gap-2 h-full">
-                            ${editBtn}
-                            ${deleteBtn}
-                        </div>
-                    </td>
-
-                </tr>
-                `;
-
-                        $("#flight_table").append(html);
+                        $("#flight_table").append(`
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 font-medium">${f.flight_code}</td>
+                        <td class="px-4 py-3">${f.airline_name}</td>
+                        <td class="px-4 py-3">
+                            ${f.origin_city} (${f.origin_code}) → ${f.dest_city} (${f.dest_code})
+                        </td>
+                        <td class="px-4 py-3">
+                            ${formatTanggalText(f.departure_date)}<br>
+                            <span class="font-semibold">${cutTime(f.departure_time)} - ${cutTime(f.arrival_time)}</span><br>
+                            <span class="text-xs text-gray-500">(${f.travel_duration} minutes)</span>
+                        </td>
+                        <td class="px-4 py-3">Rp ${Number(f.price).toLocaleString("id-ID")}</td>
+                        <td class="px-4 py-3">${f.seat_quota}</td>
+                        <td class="px-4 py-3">${statusBadge(f.status)}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-2 justify-center">
+                                ${editBtn}
+                                ${deleteBtn}
+                            </div>
+                        </td>
+                    </tr>
+                `);
                     });
+
+                    renderPagination(
+                        res.page,
+                        res.total_pages,
+                        res.total,
+                        res.limit
+                    );
                 }
             });
         }
+
 
 
         function editFlight(id) {
@@ -392,6 +422,79 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
             });
         }
 
+        function renderPagination(current, totalPages, total, limit) {
+
+            let start = (current - 1) * limit + 1;
+            let end = Math.min(current * limit, total);
+
+            let html = `
+        <div class="flex justify-between items-center w-full">
+            <div class="text-gray-600 text-sm">
+                Showing <span class="font-semibold">${start}</span> -
+                <span class="font-semibold">${end}</span> /
+                <span class="font-semibold">${total}</span>
+            </div>
+
+            <div class="flex gap-2">
+                <button ${current == 1 ? "disabled" : ""}
+                    onclick="loadUsers(${current - 1})"
+                    class="px-3 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-40">
+                    Prev
+                </button>
+    `;
+
+            // === PAGE BUTTON LOGIC (3 NUMBERS ONLY) ===
+            let pages = [];
+
+            if (totalPages <= 3) {
+                // Case: total pages <= 3 -> show all
+                for (let i = 1; i <= totalPages; i++) pages.push(i);
+
+            } else {
+                if (current <= 2) {
+                    // Case: near start → 1,2,3,...,last
+                    pages = [1, 2, 3, '...', totalPages];
+
+                } else if (current >= totalPages - 1) {
+                    // Case: near end → 1,...,last-2,last-1,last
+                    pages = [1, '...', totalPages - 2, totalPages - 1, totalPages];
+
+                } else {
+                    // Case: middle → 1,...,current,...,last
+                    pages = [1, '...', current, '...', totalPages];
+                }
+            }
+
+            // === RENDER PAGE BUTTONS ===
+            pages.forEach(p => {
+                if (p === "...") {
+                    html += `
+                <span class="px-3 py-1 text-xs text-gray-400">...</span>
+            `;
+                } else {
+                    html += `
+                <button onclick="loadUsers(${p})"
+                    class="px-3 py-1 text-xs rounded
+                    ${p == current ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}">
+                    ${p}
+                </button>
+            `;
+                }
+            });
+
+            html += `
+                <button ${current == totalPages ? "disabled" : ""}
+                    onclick="loadUsers(${current + 1})"
+                    class="px-3 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-40">
+                    Next
+                </button>
+            </div>
+        </div>
+    `;
+
+            $("#paginationContainer").html(html);
+        }
+
 
         $(document).ready(function() {
             loadFlights();
@@ -405,10 +508,14 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
                 $("#alert-error, #alert-success").fadeOut();
             }, 3000);
 
-            $("#btn_filter").click(() => loadFlights($("#filter_date").val()));
+            $("#btn_filter").click(() => {
+                currentDate = $("#filter_date").val();
+                loadFlights(1);
+            });
             $("#btn_reset").click(() => {
                 $("#filter_date").val("");
-                loadFlights();
+                currentDate = "";
+                loadFlights(1);
             });
 
             $("#btn_cancel_edit").click(function() {
@@ -422,7 +529,7 @@ $airports2 = $conn->query("SELECT * FROM airports ORDER BY city ASC");
                 $("#flight_id").remove();
             });
 
-            $("#btn_cancel_delete").click(function () {
+            $("#btn_cancel_delete").click(function() {
                 $("#deleteModal").addClass("hidden");
             });
         });

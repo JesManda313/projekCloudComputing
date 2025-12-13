@@ -1,11 +1,11 @@
 RESPONSE:
-<PublishResponse xmlns="http://sns.amazonaws.com/doc/2010-03-31/">
-  <PublishResult>
-    <MessageId>027621aa-547d-5e59-9a69-40044c7f4e69</MessageId>
-  </PublishResult>
-  <ResponseMetadata>
-    <RequestId>86e86cbb-2a9f-59b4-abb2-0d15329d5984</RequestId>
-  </ResponseMetadata>
-</PublishResponse>
+<ErrorResponse xmlns="http://sns.amazonaws.com/doc/2010-03-31/">
+  <Error>
+    <Type>Sender</Type>
+    <Code>InvalidClientTokenId</Code>
+    <Message>The security token included in the request is invalid</Message>
+  </Error>
+  <RequestId>dadfaa08-cda7-5e4e-a83a-cbbe7142c67a</RequestId>
+</ErrorResponse>
 
 ERROR:
